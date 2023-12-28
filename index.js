@@ -2,6 +2,10 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const dao = require('./DAO');
+const ObjectId = require('mongodb').ObjectId;
+//body-parser
+var bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded({ extended: false }))
 
 //register view engine
 app.set('view engine', 'ejs');
@@ -28,12 +32,6 @@ const pool = pmysql.createPool({
     database: 'proj2023'
 });
 
-// pool.query('SELECT * FROM `product`', function (error, results, fields) {
-//     if (error) throw error;
-//     console.log('response', results);
-// });
-
-
 //link to Main Page
 app.get('/', (req, res) => {
     res.render('mainpage',{title: 'Main Page'});
@@ -48,13 +46,82 @@ app.get('/stores', (req, res) => {
     });
 });
 
+//link to Store edit Page
+app.get('/store/edit/:sid', (req, res) => {
+    const id = req.params.sid;
+    pool.query('SELECT * FROM `store` WHERE sid="'+id+'"', function (error, results) {
+        if (error) throw error;
+        // console.log('response', results);
+        res.render('editstore', { "title": 'Stores', "store": results[0], "error": "" });
+    });
+});
+
+//update store
+app.post('/store/edit', (req, res) => {
+    const id = req.body.sid;
+    const loc = req.body.location;
+    const manager = req.body.mgrid;
+    console.log(id, loc, manager);
+
+    //throw error for manager length
+    if(manager.length != 4){
+        res.render('editstore', { "title": 'Stores', "store": req.body, "error": "Invalid manager id, must be 4 characters" });
+        return;
+    }
+    //detect if location is filled
+    if(loc.length < 1){
+        res.render('editstore', { "title": 'Stores', "store": req.body, "error": "Location cannot be empty" });
+        return;
+    }
+
+    pool.query('SELECT * FROM `store` WHERE mgrid="'+manager+'"', function (error, results) {
+        if (error) throw error;
+        if(results.length <= 0){
+            dao.findAll(coll).then((response) => {
+                // Process response
+                console.log("response", response);
+
+                //detect if manager exists in mongoDB
+                var hasFound = false;
+                for (let i = 0; i < response.length; i++) {
+                    const item = response[i];
+                    
+                    if(item._id == manager){
+                        hasFound = true;
+                        break;
+                    }
+                }
+                //execute code if data entered is okay
+                if(hasFound){
+                    pool.query('UPDATE `store` SET location= "'+loc+'", mgrid= "'+manager+'" WHERE sid="' + id +'"', function (error, results) {
+                        if (error) throw error;
+                        res.redirect('/stores');
+                    });
+                }
+                //throw error if manager doesnt exist
+                else{
+                    res.render('editstore', { "title": 'Stores', "store": req.body, "error": "Manager doesn't exist" });
+                }
+            }).catch((error) => {
+                // Handle error
+                console.error(error);
+            })
+        }
+        //throw error if manager is already assigned
+        else{
+            res.render('editstore', { "title": 'Stores', "store": req.body, "error": "Manager is already assinged to another store" });
+        }
+    });
+});
+
+
 //link to Products Page
 app.get('/products', (req, res) => {
     //SELECT * FROM `product_store` INNER JOIN product ON product_store.pid = product.pid INNER JOIN store on product_store.sid = store.sid
     pool.query('SELECT * FROM `product_store` INNER JOIN product ON product_store.pid = product.pid INNER JOIN store on product_store.sid = store.sid', function (error, results) {
         if (error) throw error;
         // console.log('response', results);
-        res.render('products', { "title": 'Products', "products": results });
+        res.render('products', { "title": 'Products', "products": results, "error": "" });
     });
     // res.render('products', { title: 'Products' });
 });
@@ -70,10 +137,15 @@ app.get('/product/delete/:pid', (req, res) => {
             pool.query('DELETE FROM `product` WHERE pid="' + id + '"', function (error, results) {
                 if (error) throw error;
                 console.log(id, "has been deleted");
+                res.redirect('/products');
             });
         }
         else{
-            console.log(id, "cannot be deleted (is in stores)");
+            pool.query('SELECT * FROM `product_store` INNER JOIN product ON product_store.pid = product.pid INNER JOIN store on product_store.sid = store.sid', function (error1, results1) {
+                if (error1) throw error1;
+                console.log('response', results);
+                res.render('products', { "title": 'Products', "products": results1, "error": id + " is currently sold in stores and cannot be deleted" });
+            });
         }
     });
 });
@@ -83,7 +155,7 @@ app.get('/managers', (req, res) => {
     dao.findAll(coll)
     .then((response) => {
         // Process response
-        console.log("response", response);
+        //console.log("response", response);
         res.render('managers', { "title": 'Managers', "managers": response, "error": ''});
     })
     .catch((error) => {
@@ -91,7 +163,34 @@ app.get('/managers', (req, res) => {
         console.error(error);
         res.render('managers', { "title": 'Managers', "managers": [], "error": error});
     })
-})
+});
+
+//link to add manager page
+app.get('/manager/add', (req, res) => {
+    res.render('addmanager', { "title": 'Add Manager', "error": ''});
+});
+
+//add new manager
+app.post('/manager/add', (req, res) => {
+    const id = req.body._id;
+    const name = req.body.name;
+    const salary = req.body.salary;
+    dao.addManager(coll, {
+        "_id": new ObjectId(id),
+        "name": name,
+        "salary": salary
+    })
+    .then((result) => {
+        res.redirect("/managers");
+    })
+    .catch((error) => {
+        if (error.message.includes("E11000")) {
+            res.send("Error _id:"+id+" already exists")
+        } else {
+            res.send(error.message)
+        }
+    })
+});
 
 //listen for requests coming in
 app.listen(port, () => {

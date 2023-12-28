@@ -14,12 +14,19 @@
             <a href="/"><h1>Home</h1></a>
         </div>
 
-        <form action="/action_page.php">
-            <label for="fname">First name:</label><br>
-            <input type="text" id="fname" name="fname" value="John"><br>
-            <label for="lname">Last name:</label><br>
-            <input type="text" id="lname" name="lname" value="Doe"><br><br>
+        <label><%= error %></label>
+
+        <form action="/store/edit" method="post">
+            <input name="sid" hidden value="<%= store.sid %>">
+
+            <label for="sid">SID:</label><br>
+            <input disabled nametype="text" id="sid" value="<%= store.sid %>"><br>
+            <label for="location">Location:</label><br>
+            <input name="location" type="text" id="loc" value="<%= store.location %>"><br>
+            <label for="manager">Manager:</label><br>
+            <input name="mgrid" type="text" id="mangr" value="<%= store.mgrid %>"><br><br>
             <input type="submit" value="Submit">
+            <a href="/stores">Cancel</a>
         </form>
     </body>
 </html>

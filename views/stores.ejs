@@ -18,6 +18,7 @@
                 <th>SID</th>
                 <th>Location</th>
                 <th>Manager</th>
+                <th>Action</th>
             </tr>
             <% stores.forEach((item)=> { %>
                 <tr>
@@ -29,6 +30,9 @@
                     </td>
                     <td>
                         <%= item.mgrid %>
+                    </td>
+                    <td>
+                        <a href="./store/edit/<%= item.sid %>"">Edit</a>                        
                     </td>
                 </tr>
                 <% }) %>

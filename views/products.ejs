@@ -4,6 +4,7 @@
         <!-- some html -->
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <base href="http://localhost:3000/">
         <!-- get the title of the page dynamically -->
         <title>Data Centric Project | <%= title %></title>
     </head>
@@ -12,6 +13,7 @@
         <div>
             <a href="/"><h1>Home</h1></a>
         </div>
+        <label><%= error %></label>
         <!-- table to display all the data -->
         <table>
             <tr>

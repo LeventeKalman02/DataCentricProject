@@ -1,0 +1,35 @@
+<html lang="en">
+
+<head>
+    <!-- some html -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- get the title of the page dynamically -->
+    <title>Data Centric Project | <%= title %>
+    </title>
+</head>
+
+<body>
+    <div>
+        <a href="/">
+            <h1>Home</h1>
+        </a>
+    </div>
+
+    <label>
+        <%= error %>
+    </label>
+
+    <form action="/manager/add" method="post">
+        <label for="id">ID:</label><br>
+        <input nametype="text" id="id" value=""><br>
+        <label for="name">Name:</label><br>
+        <input name="name" type="text" id="name" value=""><br>
+        <label for="salary">Salary:</label><br>
+        <input name="salary" type="text" id="sal" value=""><br><br>
+        <input type="submit" value="Submit">
+        <a href="/managers">Cancel</a>
+    </form>
+</body>
+
+</html>
