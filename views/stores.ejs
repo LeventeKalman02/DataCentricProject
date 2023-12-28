@@ -8,4 +8,31 @@
         <title>Data Centric Project | <%= title %></title>
     </head> 
 
+    <body>
+        <div>
+            <a href="/"><h1>Data Centric Project</h1></a>
+        </div>
+        <!-- table to display all the data -->
+        <table>
+            <tr>
+                <th>SID</th>
+                <th>Location</th>
+                <th>Manager</th>
+            </tr>
+            <% stores.forEach((item)=> { %>
+                <tr>
+                    <td>
+                        <%= item.sid %>
+                    </td>
+                    <td>
+                        <%= item.location %>
+                    </td>
+                    <td>
+                        <%= item.mgrid %>
+                    </td>
+                </tr>
+                <% }) %>
+        </table>
+    </body>
+
 </html>

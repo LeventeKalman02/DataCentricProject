@@ -8,4 +8,30 @@
         <title>Data Centric Project | <%= title %></title>
     </head>
 
+    <body>
+        <div>
+            <a href="/"><h1>Data Centric Project</h1></a>
+        </div>
+        <!-- table to display all the data -->
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Description</th>
+                <th>Supplier</th>
+            </tr>
+            <% products.forEach((item)=> { %>
+                <tr>
+                    <td>
+                        <%= item.pid %>
+                    </td>
+                    <td>
+                        <%= item.productdesc %>
+                    </td>
+                    <td>
+                        <%= item.supplier %>
+                    </td>
+                </tr>
+                <% }) %>
+        </table>
+    </body>
 </html>
