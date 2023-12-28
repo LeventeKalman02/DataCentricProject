@@ -10,14 +10,20 @@
 
     <body>
         <div>
-            <a href="/"><h1>Data Centric Project</h1></a>
+            <a href="/"><h1>Home</h1></a>
         </div>
         <!-- table to display all the data -->
         <table>
             <tr>
-                <th>ID</th>
-                <th>Description</th>
+                <th>PID</th>
+                <th>SID</th>
+                <th>Price</th>
+                <th>Product Description</th>
                 <th>Supplier</th>
+                <th>Location</th>
+                <th>MGRID</th>
+                <th>Action</th>
+
             </tr>
             <% products.forEach((item)=> { %>
                 <tr>
@@ -25,10 +31,25 @@
                         <%= item.pid %>
                     </td>
                     <td>
+                        <%= item.sid %>
+                    </td>
+                    <td>
+                        <%= item.Price %>
+                    </td>
+                    <td>
                         <%= item.productdesc %>
                     </td>
                     <td>
                         <%= item.supplier %>
+                    </td>
+                    <td>
+                        <%= item.location %>
+                    </td>
+                    <td>
+                        <%= item.mgrid %>
+                    </td>
+                    <td>
+                        <a href="./product/delete/<%= item.pid %>">Delete</a>
                     </td>
                 </tr>
                 <% }) %>

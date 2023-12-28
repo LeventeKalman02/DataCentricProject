@@ -20,7 +20,6 @@ MongoClient.connect('mongodb://127.0.0.1:27017')
 
 //connecting to the sql database
 const pmysql = require('mysql2');
-
 const pool = pmysql.createPool({
     connectionLimit: 10,
     host: 'localhost',
@@ -28,17 +27,11 @@ const pool = pmysql.createPool({
     password: 'root',
     database: 'proj2023'
 });
-    // .then(p => {
-    //     pool = p
-    // })
-    // .catch(e => {
-    //     console.log("pool error:" + e)
-    // })
 
-pool.query('SELECT * FROM `product`', function (error, results, fields) {
-    if (error) throw error;
-    console.log('response', results);
-});
+// pool.query('SELECT * FROM `product`', function (error, results, fields) {
+//     if (error) throw error;
+//     console.log('response', results);
+// });
 
 
 //link to Main Page
@@ -57,7 +50,8 @@ app.get('/stores', (req, res) => {
 
 //link to Products Page
 app.get('/products', (req, res) => {
-    pool.query('SELECT * FROM `product`', function (error, results) {
+    //SELECT * FROM `product_store` INNER JOIN product ON product_store.pid = product.pid INNER JOIN store on product_store.sid = store.sid
+    pool.query('SELECT * FROM `product_store` INNER JOIN product ON product_store.pid = product.pid INNER JOIN store on product_store.sid = store.sid', function (error, results) {
         if (error) throw error;
         // console.log('response', results);
         res.render('products', { "title": 'Products', "products": results });
@@ -65,10 +59,24 @@ app.get('/products', (req, res) => {
     // res.render('products', { title: 'Products' });
 });
 
-//link to Managers Page
-// app.get('/managers', (req, res) => {
-//     res.render('managers', { title: 'Managers' });
-// });
+//link to Product delete Page
+app.get('/product/delete/:pid', (req, res) => {
+    //'SELECT * FROM `product_store` INNER JOIN product ON product_store.pid = product.pid INNER JOIN store on product_store.sid = store.sid WHERE product.pid="' + req.params.pid + '"'
+    
+    const id = req.params.pid;
+    pool.query('SELECT * FROM `product_store` WHERE product_store.pid="' + id + '"', function (error, results) {
+        if (error) throw error;
+        if(results.length <= 0){
+            pool.query('DELETE FROM `product` WHERE pid="' + id + '"', function (error, results) {
+                if (error) throw error;
+                console.log(id, "has been deleted");
+            });
+        }
+        else{
+            console.log(id, "cannot be deleted (is in stores)");
+        }
+    });
+});
 
 //link to managers page and also getting the data from the collection
 app.get('/managers', (req, res) => {
