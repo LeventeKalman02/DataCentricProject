@@ -7,4 +7,23 @@
         <!-- get the title of the page dynamically -->
         <title>Data Centric Project | <%= title %></title>
     </head>
+
+    <body>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>salary</th>
+            </tr>
+            <% managers.forEach((item) => { %>
+            <tr>
+                <td><%= item._id %></td>
+                <td><%= item.name %></td>
+                <td><%= item.salary %></td>
+            </tr>
+            <% }) %>
+        </table>
+
+        <p><%= error %></p>
+    </body>
 </html>
