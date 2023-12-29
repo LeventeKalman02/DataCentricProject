@@ -23,8 +23,8 @@ MongoClient.connect('mongodb://127.0.0.1:27017')
 })
 
 //connecting to the sql database
-const pmysql = require('mysql2');
-const pool = pmysql.createPool({
+const mysql = require('mysql2');
+const pool = mysql.createPool({
     connectionLimit: 10,
     host: 'localhost',
     user: 'root',
@@ -121,19 +121,19 @@ app.get('/store/add', (req, res) => {
 
 //add new store
 app.post('/store/add', (req, res) => {
-    const id = req.body.sid;
+    const id = req.body.id;
     const loc = req.body.location;
     const manager = req.body.mgrid;
-    console.log(id, loc, manager);
+    console.log(id, loc, manager, req.body);
 
     //throw error for manager length
     if (manager.length != 4) {
-        res.render('addstore', { "title": 'Stores', "store": req.body, "error": "Invalid manager id, must be 4 characters" });
+        res.render('addstore', { "title": 'Add Store', "Add Store": req.body, "error": "Invalid manager id, must be 4 characters" });
         return;
     }
     //detect if location is filled
     if (loc.length < 1) {
-        res.render('addstore', { "title": 'Stores', "store": req.body, "error": "Location cannot be empty" });
+        res.render('addstore', { "title": 'Add Store', "store": req.body, "error": "Location cannot be empty" });
         return;
     }
 
@@ -156,14 +156,14 @@ app.post('/store/add', (req, res) => {
                 }
                 //execute code if data entered is okay
                 if (hasFound) {
-                    pool.query('INSERT INTO `store` SET sid = "'+ id +'", location= "' + loc + '", mgrid= "' + manager + '"', function (error, results) {
+                    pool.query('INSERT INTO `store`(sid, location, mgrid) VALUES ("'+id+'","'+loc+'","'+manager+'")', function (error, results) {
                         if (error) throw error;
                         res.redirect('/stores');
                     });
                 }
                 //throw error if manager doesnt exist
                 else {
-                    res.render('addstore', { "title": 'Stores', "store": req.body, "error": "Manager doesn't exist" });
+                    res.render('addstore', { "title": 'Add Store', "store": req.body, "error": "Manager doesn't exist" });
                 }
             }).catch((error) => {
                 // Handle error
