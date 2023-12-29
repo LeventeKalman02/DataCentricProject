@@ -20,15 +20,15 @@
         <%= error %>
     </label>
 
-    <form action="/manager/add" method="post">
-        <label for="id">ID:</label><br>
-        <input nametype="text" id="id" value=""><br>
-        <label for="name">Name:</label><br>
-        <input name="name" type="text" id="name" value=""><br>
-        <label for="salary">Salary:</label><br>
-        <input name="salary" type="number" id="sal" value=""><br><br>
+    <form action="/store/add" method="post">
+        <label for="id">SID:</label><br>
+        <input nametype="text" id="sid" value=""><br>
+        <label for="loc">Location:</label><br>
+        <input name="location" type="text" id="loc" value=""><br>
+        <label for="manager">Manager:</label><br>
+        <input name="mgrid" type="text" id="mangr" value=""><br><br>
         <input type="submit" value="Submit">
-        <a href="/managers">Cancel</a>
+        <a href="/stores">Cancel</a>
     </form>
 </body>
 
