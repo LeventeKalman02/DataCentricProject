@@ -117,11 +117,12 @@ app.post('/store/edit', (req, res) => {
 //link to Store add Page
 app.get('/store/add', (req, res) => {
     res.render('addstore', { "title": 'Add Store', "error": "" });
+    console.log(req.body.sid, req.body.location);
 });
 
 //add new store
 app.post('/store/add', (req, res) => {
-    const id = req.body.id;
+    const id = req.body.sid;
     const loc = req.body.location;
     const manager = req.body.mgrid;
     console.log(id, loc, manager, req.body);
